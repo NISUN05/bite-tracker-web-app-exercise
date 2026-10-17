@@ -4,7 +4,7 @@ A little exercise to build a web application following an agile development proc
 
 ## Product vision statement
 
-See instructions. Delete this line and place the Product Vision Statement here.
+Bite Tracker helps users record, review, and organize their daily food intake by allowing them to log meals, track macronutrients, and search their food history in one convenient place.
 
 ## User stories
 
