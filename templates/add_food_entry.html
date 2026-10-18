@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Food Entry | Bite Tracker</title>
+</head>
+<body>
+    <main>
+        <h1>Add Food Entry</h1>
+        <p>Record a meal and its nutrition information.</p>
+
+        <form method="post">
+            <p>
+                <label for="date">Date</label><br>
+                <input type="date" id="date" name="date" required>
+            </p>
+        
+            <p>
+                <label for="food_name">Food name</label><br>
+                <input type="text" id="food_name" name="food_name" required>
+            </p>
+        
+            <p>
+                <label for="meal">Meal</label><br>
+                <select id="meal" name="meal" required>
+                    <option value="">Choose a meal</option>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snacks">Snacks</option>
+                </select>
+            </p>
+
+            <p>
+                <label for="calories">Calories (kcal)</label><br>
+                <input type="number" id="calories" name="calories"
+                       min="0" step="any" required>
+            </p>
+            
+            <p>
+                <label for="protein">Protein (g)</label><br>
+                <input type="number" id="protein" name="protein"
+                       min="0" step="any" required>
+            </p>
+            
+            <p>
+                <label for="carbs">Carbohydrates (g)</label><br>
+                <input type="number" id="carbs" name="carbs"
+                       min="0" step="any" required>
+            </p>
+            
+            <p>
+                <label for="fat">Fat (g)</label><br>
+                <input type="number" id="fat" name="fat"
+                       min="0" step="any" required>
+            </p>
+
+            <button type="submit">Preview entry</button>
+
+
+        </form>
+
+    
+    </main>
+</body>
+</html>

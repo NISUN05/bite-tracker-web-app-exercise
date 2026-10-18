@@ -2,7 +2,7 @@ import certifi
 import os
 
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, render_template, request
 from pymongo import MongoClient
 
 load_dotenv()
@@ -37,6 +37,13 @@ def db_test():
     client.admin.command("ping")
     return "Successfully connected to MongoDB!"
 
+
+@app.route("/add", methods=["GET", "POST"])
+def add_food_entry():
+    if request.method == "POST":
+        return dict(request.form)
+
+    return render_template("add_food_entry.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
