@@ -1,0 +1,72 @@
+.entry-form .field {
+    min-width: 0;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.entry-form input,
+.entry-form select {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--foreground);
+    background: #0a0a0c;
+    font: inherit;
+    font-size: 16px;
+}
+
+.entry-form select:focus-visible {
+    outline: 2px solid #72a7ff;
+    outline-offset: 3px;
+}
+
+.entry-details,
+.entry-nutrition {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 12px;
+}
+
+.entry-form fieldset {
+    min-width: 0;
+    padding: 0;
+    margin: 4px 0 0;
+    border: 0;
+}
+
+.entry-form legend {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.entry-notice {
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+.entry-notice p,
+.entry-notice ul {
+    margin: 0;
+}
+
+.entry-notice ul {
+    padding-left: 20px;
+}
+
+.entry-success {
+    color: #8ce7a3;
+    background: rgba(93, 214, 117, .08);
+    font-size: 13px;
+}
+
+@media (max-width: 380px) {
+    .entry-details,
+    .entry-nutrition {
+        grid-template-columns: 1fr;
+    }
+}

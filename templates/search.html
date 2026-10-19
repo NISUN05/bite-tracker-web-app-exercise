@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-card">
+  <h2>Find a meal</h2>
+  <form method="get" action="{{ url_for('search') }}" class="search-form">
+    <label class="field">Food name<input name="q" type="search" value="{{ query }}" maxlength="120" placeholder="e.g. oatmeal"></label><button class="primary-button">Search</button>
+  </form>
+  <p class="form-hint">{{ 'Search is limited to sample meals in this frontend preview.' if preview else 'Search your saved meal entries.' }}</p>
+</section>
+{% if query %}<section class="meal-log" aria-labelledby="results-title"><header><h2 id="results-title">{{ meals|length }} results</h2><a class="text-link" href="{{ url_for('search') }}">Clear</a></header>{% include "_meal_list.html" %}</section>{% endif %}
+{% endblock %}
