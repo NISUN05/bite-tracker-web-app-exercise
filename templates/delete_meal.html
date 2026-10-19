@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-card">
+  <div class="delete-symbol">{{ icon('Trash2', 26) }}</div><h2>Delete this meal?</h2>
+  <p class="form-hint">Review the entry before deleting it.</p>
+  <div class="delete-summary"><strong>{{ meal.name }}</strong><span>{{ meal.calories }} kcal · {{ meal.date_label }}</span><small>{{ meal.protein }}P · {{ meal.carbs }}C · {{ meal.fat }}F</small></div>
+  <form method="post" action="{{ url_for('delete_meal', meal_id=meal.id) }}" data-preview-form="delete">
+    <p class="form-error" role="status" data-form-status hidden></p>
+    <button class="primary-button">Delete meal</button><a class="secondary-link" href="{{ url_for('meals') }}">Keep meal</a>
+  </form>
+</section>
+{% endblock %}

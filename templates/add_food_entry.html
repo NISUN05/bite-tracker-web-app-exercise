@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='add_food_entry.css') }}">
+{% endblock %}
+{% block content %}
+<section class="page-card">
+    <h2>Log a meal</h2>
+    {% if saved %}
+        <p class="entry-notice entry-success" role="status">Food entry saved successfully.</p>
+    {% endif %}
+    {% if errors %}
+        <div class="entry-notice form-error" role="alert">
+            <p>Please check your entry:</p>
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <form class="entry-form" method="post" action="{{ url_for('add_meal') }}">
+        <p class="form-hint">All fields are required. Use nutrition values for this entry.</p>
+        <div class="field">
+            <label for="food_name">Food name</label>
+            <input type="text" id="food_name" name="food_name"
+                   value="{{ request.form.get('food_name', '') }}"
+                   placeholder="e.g. Oatmeal and berries" required>
+        </div>
+        <div class="entry-details">
+            <div class="field">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date"
+                       value="{{ request.form.get('date', today) }}" required>
+            </div>
+            <div class="field">
+                <label for="meal">Meal</label>
+                <select id="meal" name="meal" required>
+                    <option value="">Choose a meal</option>
+                    {% for value, label in meal_choices %}
+                        <option value="{{ value }}"
+                                {% if request.form.get('meal') == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <fieldset>
+            <legend>Nutrition</legend>
+            <p class="form-hint" id="nutrition-help">Enter 0 when a nutrient is absent.</p>
+            <div class="entry-nutrition">
+                {% for key, label, unit in [
+                    ('calories', 'Calories', 'kcal'),
+                    ('protein', 'Protein', 'g'),
+                    ('carbs', 'Carbohydrates', 'g'),
+                    ('fat', 'Fat', 'g')
+                ] %}
+                    <div class="field">
+                        <label for="{{ key }}">{{ label }} ({{ unit }})</label>
+                        <input type="number" id="{{ key }}" name="{{ key }}"
+                               value="{{ request.form.get(key, '') }}"
+                               min="0" step="any" inputmode="decimal"
+                               aria-describedby="nutrition-help" required>
+                    </div>
+                {% endfor %}
+            </div>
+        </fieldset>
+        <button class="primary-button" type="submit">Save entry</button>
+        <a class="secondary-link" href="{{ url_for('index') }}">Back to today</a>
+    </form>
+</section>
+{% endblock %}

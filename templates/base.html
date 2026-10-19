@@ -1,0 +1,33 @@
+{% from "_icons.html" import icon %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A simple mobile calorie and meal tracker.">
+  <title>{{ title }} | Macros</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block page_styles %}{% endblock %}
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body data-preview="{{ 'true' if preview else 'false' }}">
+<main class="app-shell">
+  <header class="app-header">
+    <div><p>Macros Tracker</p><h1>{{ title }}</h1><span>{{ subtitle }}</span></div>
+    <a class="icon-button" href="{{ url_for('goals') }}" aria-label="Open profile and goals">{{ icon('UserRound') }}</a>
+  </header>
+  <nav class="screen-links" aria-label="Browse">
+    <a href="{{ url_for('index') }}" {% if active == 'today' %}aria-current="page"{% endif %}>Today</a>
+    <a href="{{ url_for('meals') }}" {% if active == 'meals' %}aria-current="page"{% endif %}>Meals</a>
+    <a href="{{ url_for('search') }}" {% if active == 'search' %}aria-current="page"{% endif %}>Search</a>
+  </nav>
+  {% if preview %}<p class="preview-note">Frontend preview · sample data · changes are not saved</p>{% endif %}
+  {% block content %}{% endblock %}
+  <nav class="bottom-nav" aria-label="Primary">
+    <a href="{{ url_for('index') }}" class="{{ 'active' if active == 'today' else '' }}">{{ icon('CalendarDays', 22) }}<span>Today</span></a>
+    <a href="{{ url_for('add_meal') }}" class="add-button" aria-label="Add meal">{{ icon('Plus', 25) }}</a>
+    <a href="{{ url_for('meals') }}" class="{{ 'active' if active == 'meals' else '' }}">{{ icon('History', 22) }}<span>Meals</span></a>
+  </nav>
+</main>
+</body>
+</html>
