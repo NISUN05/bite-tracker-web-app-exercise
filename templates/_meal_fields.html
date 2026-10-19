@@ -1,7 +1,10 @@
-<label class="field">Food name<input name="name" value="{{ meal.name if meal else '' }}" maxlength="120" placeholder="e.g. Oatmeal and berries" required></label>
-<div class="goal-fields meal-fields">
-  <label class="field wide">Calories (kcal)<input name="calories" value="{{ meal.calories if meal else '' }}" type="number" min="1" max="10000" step="1" inputmode="numeric" placeholder="e.g. 350" required></label>
-  {% for key, label in [('protein', 'Protein'), ('carbs', 'Carbs'), ('fat', 'Fat')] %}<label class="field">{{ label }} (g)<input name="{{ key }}" value="{{ meal[key] if meal else '' }}" type="number" min="0" max="1000" step="0.1" inputmode="decimal" placeholder="0"></label>{% endfor %}
-  <label class="field wide">Meal date &amp; time<input name="loggedAt" type="datetime-local" value="{{ meal.input_date if meal else default_date }}" required></label>
+<label class="field">What did you eat?<input name="name" value="{{ meal.name if meal else '' }}" maxlength="120" placeholder="e.g. Toast and scrambled eggs" required></label>
+<div class="meal-fields">
+  <label class="field">Calories<input name="calories" value="{{ meal.calories if meal else '' }}" type="number" min="1" max="10000" step="1" inputmode="numeric" placeholder="e.g. 350" required></label>
+  <p class="form-hint">Use the food label or your best estimate.</p>
+  <label class="field">When did you have it?<input name="loggedAt" type="datetime-local" value="{{ meal.input_date if meal else default_date }}" required></label>
 </div>
-<p class="form-hint">Macros are optional. Enter calories from your food label or your own estimate.</p>
+<details class="optional-fields" {% if meal %}open{% endif %}>
+  <summary>Add protein, carbs and fat <span>(optional)</span></summary>
+  <div class="goal-fields meal-fields">{% for key, label in [('protein', 'Protein'), ('carbs', 'Carbs'), ('fat', 'Fat')] %}<label class="field">{{ label }} (g)<input name="{{ key }}" value="{{ meal[key] if meal else '' }}" type="number" min="0" max="1000" step="0.1" inputmode="decimal" placeholder="0"></label>{% endfor %}</div>
+</details>

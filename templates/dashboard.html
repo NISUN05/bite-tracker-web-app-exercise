@@ -1,28 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="coach-card" aria-labelledby="insight-title">
-  <div class="coach-icon">{{ icon('Sparkles', 17) }}</div>
-  <div><p id="insight-title">Daily overview</p><h2>You’ve logged {{ summary.calories }} calories today. {{ summary.remaining }} left in your daily target.</h2></div>
+<section class="daily-summary" aria-labelledby="summary-title">
+  <div class="section-heading"><h2 id="summary-title">A look at your day</h2><a class="text-link" href="{{ url_for('goals') }}">Edit goals</a></div>
+  <p class="calorie-total"><strong>{{ summary.calories }}</strong> <span>of {{ goals.calories }} calories</span></p>
+  <progress value="{{ summary.calories }}" max="{{ goals.calories }}" aria-label="Calories logged toward your daily goal"></progress>
+  <p class="form-hint">{{ meals|length }} meals logged today{% if summary.calories <= goals.calories %} &middot; {{ summary.remaining }} calories to your goal{% else %} &middot; {{ summary.calories - goals.calories }} calories above your goal{% endif %}</p>
+  <dl class="macro-grid">{% for macro in macros %}<div><dt>{{ macro.label }}</dt><dd>{{ macro.value }}<span> / {{ goals[macro.label|lower] }} g</span></dd></div>{% endfor %}</dl>
 </section>
-<section class="rings-card">
-  <div class="progress-rings" aria-label="{{ summary.calories }} of {{ goals.calories }} calories">
-    <svg viewBox="0 0 128 128" aria-hidden="true">
-      <defs><linearGradient id="calorie-gradient" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#ffd75f"/><stop offset="100%" stop-color="#ff4d55"/></linearGradient></defs>
-      {% for ring in rings %}<g><circle cx="64" cy="64" r="{{ ring.radius }}" class="ring-track"/><circle cx="64" cy="64" r="{{ ring.radius }}" class="ring-progress" stroke="{{ ring.color }}" stroke-dasharray="{{ ring.circumference }}" stroke-dashoffset="{{ ring.offset }}"/></g>{% endfor %}
-    </svg>
-    <div class="ring-center"><strong>{{ summary.calories }}</strong><span>kcal</span></div>
-  </div>
-  <div class="ring-legend">
-    {% for ring in rings %}<div><i style="background:{{ ring.legend_color }}"></i><span><strong>{{ ring.label }}</strong><small>{{ ring.remaining }}{{ ring.unit }} left</small></span></div>{% endfor %}
-  </div>
+<section class="meal-log" aria-labelledby="log-title">
+  <header class="section-heading"><h2 id="log-title">What you ate</h2><a class="primary-button compact" href="{{ url_for('add_meal') }}">{{ icon('Plus', 17) }} Add a meal</a></header>
+  {% include "_meal_list.html" %}
+  <a class="text-link history-link" href="{{ url_for('meals') }}">See all meals &rarr;</a>
 </section>
-<section class="macro-grid" aria-label="Daily macros">
-  {% for macro in macros %}<div class="macro-card"><div class="macro-label" style="color:{{ macro.color }}">{{ macro.label }}</div><strong>{{ macro.value }}g</strong><span>{{ macro.remaining }}g left</span><div class="macro-track"><i style="background:{{ macro.color }};width:{{ macro.percent }}%"></i></div></div>{% endfor %}
-</section>
-<section class="coach-target-card"><div><span>{{ icon('Target', 15) }} Daily calorie target</span><strong>{{ goals.calories }} kcal</strong><small>{{ meals|length }} meals logged today</small></div><div class="score-orb">{{ icon('Flame', 18) }}<strong>{{ summary.percent }}%</strong><small>of goal</small></div></section>
-<section class="utility-grid">
-  <div class="utility-card"><span>{{ icon('Droplets', 15) }} Water</span><strong>0<small>/ {{ goals.water }} ml</small></strong><a class="text-link" href="{{ url_for('goals') }}">Daily targets {{ icon('ChevronRight', 13) }}</a></div>
-  <a class="utility-card action-card" href="{{ url_for('add_meal') }}"><span>{{ icon('Utensils', 15) }} Quick add</span><strong>Log food</strong><small>Enter food and calories</small>{{ icon('ChevronRight', 18) }}</a>
-</section>
-<section class="meal-log" aria-labelledby="log-title"><header><h2 id="log-title">Today's log</h2><a class="text-link" href="{{ url_for('meals') }}">View all</a></header>{% include "_meal_list.html" %}</section>
 {% endblock %}
