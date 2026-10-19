@@ -7,6 +7,7 @@
   <meta name="description" content="A simple mobile calorie and meal tracker.">
   <title>{{ title }} | Macros</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block page_styles %}{% endblock %}
   <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
 </head>
 <body data-preview="{{ 'true' if preview else 'false' }}">
