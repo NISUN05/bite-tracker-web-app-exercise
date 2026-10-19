@@ -11,15 +11,15 @@
     min-height: 46px;
     padding: 12px;
     border: 1px solid var(--line);
-    border-radius: 12px;
-    color: var(--foreground);
-    background: #0a0a0c;
+    border-radius: 5px;
+    color: var(--ink);
+    background: white;
     font: inherit;
     font-size: 16px;
 }
 
 .entry-form select:focus-visible {
-    outline: 2px solid #72a7ff;
+    outline: 3px solid #63866a;
     outline-offset: 3px;
 }
 
@@ -45,7 +45,7 @@
 .entry-notice {
     padding: 14px;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: 5px;
     overflow-wrap: anywhere;
 }
 
@@ -59,8 +59,8 @@
 }
 
 .entry-success {
-    color: #8ce7a3;
-    background: rgba(93, 214, 117, .08);
+    color: #345337;
+    background: #edf3e8;
     font-size: 13px;
 }
 
