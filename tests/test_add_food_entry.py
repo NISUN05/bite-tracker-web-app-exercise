@@ -179,7 +179,8 @@ class AddFoodEntryTests(unittest.TestCase):
             with self.subTest(path=path):
                 page = self.browser.get(path)
                 self.assertEqual(page.status_code, 200)
-                self.assertIn("Frontend preview", page.get_data(as_text=True))
+                self.assertIn('data-preview="true"', page.get_data(as_text=True))
+                self.assertIn("Changes won't be saved.", page.get_data(as_text=True))
         self.assertIn('href="/meals/new"', self.browser.get("/").get_data(as_text=True))
         self.collection.insert_one.assert_not_called()
 
