@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="page-card">
-  <h2>Profile &amp; daily targets</h2>
+  <h2>Your daily goals</h2>
   <form method="post" action="{{ url_for('goals') }}" data-preview-form="goals">
     <label class="field">Display name<input name="displayName" value="{{ display_name }}" maxlength="80" required></label>
     <div class="goal-heading">{{ icon('Target', 15) }} Daily targets</div>

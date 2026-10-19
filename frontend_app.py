@@ -76,36 +76,36 @@ def index():
 
 @app.get("/meals")
 def meals():
-    return screen("meals.html", "Meal history", "meals", "Your nutrition timeline", meals=sample_meals())
+    return screen("meals.html", "My meals", "meals", "A record of what you’ve eaten.", meals=sample_meals())
 
 
 @app.get("/meals/new")
 def add_meal():
-    return screen("add_meal.html", "Add meal", subtitle="Enter a food and its calories", meal=None,
+    return screen("add_meal.html", "Add meal", subtitle="What did you have?", meal=None,
                   default_date=datetime.now().strftime("%Y-%m-%dT%H:%M"))
 
 
 @app.get("/meals/<meal_id>/edit")
 def edit_meal(meal_id):
-    return screen("edit_meal.html", "Edit meal", "meals", "Update your food entry", meal=sample_meal(meal_id))
+    return screen("edit_meal.html", "Edit meal", "meals", "Make a quick change to your meal.", meal=sample_meal(meal_id))
 
 
 @app.get("/meals/<meal_id>/delete")
 def delete_meal(meal_id):
-    return screen("delete_meal.html", "Delete meal", "meals", "Review before removing", meal=sample_meal(meal_id))
+    return screen("delete_meal.html", "Delete meal", "meals", "Take a moment to check this entry.", meal=sample_meal(meal_id))
 
 
 @app.get("/search")
 def search():
     query = request.args.get("q", "").strip()[:120]
     matches = [meal for meal in sample_meals() if query.casefold() in meal["name"].casefold()] if query else []
-    return screen("search.html", "Search meals", "search", "Find entries by food name", query=query,
+    return screen("search.html", "Search meals", "search", "Looking for something you ate?", query=query,
                   meals=matches, empty_message="Try a different food name.")
 
 
 @app.get("/goals")
 def goals():
-    return screen("goals.html", "Profile & Goals", subtitle="Your daily targets")
+    return screen("goals.html", "My goals", subtitle="Set the daily amounts that work for you.")
 
 
 if __name__ == "__main__":
