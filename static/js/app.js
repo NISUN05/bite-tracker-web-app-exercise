@@ -14,7 +14,7 @@ if (document.body.dataset.preview === "true") {
         return;
       }
       const message = form.querySelector("[data-form-status]");
-      message.textContent = "Frontend preview only. Your teammate will connect this form to MongoDB; no data was changed.";
+      message.textContent = "This is a demo, so your changes haven’t been saved.";
       message.hidden = false;
     });
   }
