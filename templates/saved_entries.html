@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-card">
+  <h2>Saved entries</h2>
+  <p class="form-hint">Choose a saved meal to edit its date, category, or nutrition.</p>
+  <a class="primary-button compact" href="{{ url_for('add_meal') }}">Add a meal</a>
+  {% if error %}<p role="alert">{{ error }}</p>{% endif %}
+  {% for entry in entries %}
+  <article class="meal-row">
+    <div><h3>{{ entry.get('food_name', 'Unnamed meal') }}</h3>
+    <p>{{ entry.get('date', '') }} · {{ entry.get('meal', '')|title }} · {{ entry.get('calories', 0) }} kcal</p></div>
+    <a class="secondary-link" href="{{ url_for('edit_meal', meal_id=entry['_id']|string) }}">Edit<span class="sr-only"> {{ entry.get('food_name', 'meal') }}</span></a>
+  </article>
+  {% else %}{% if not error %}<p>No saved entries on this page.</p>{% endif %}{% endfor %}
+  {% if page > 1 %}<a class="secondary-link" href="{{ url_for('saved_entries', page=page-1) }}">Previous</a>{% endif %}
+  {% if has_next %}<a class="secondary-link" href="{{ url_for('saved_entries', page=page+1) }}">Next</a>{% endif %}
+</section>
+{% endblock %}

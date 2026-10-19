@@ -5,6 +5,7 @@
 {% block content %}
 <section class="page-card">
     <h2>Log a meal</h2>
+    <p><a class="secondary-link" href="{{ url_for('saved_entries') }}">View and edit saved entries</a></p>
     {% if saved %}
         <p class="entry-notice entry-success" role="status">Food entry saved successfully.</p>
     {% endif %}

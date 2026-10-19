@@ -59,7 +59,8 @@ See instructions. Delete this line and place a link to the user stories here.
 
    Open <http://127.0.0.1:5000/> for the team's UI and use its Add button,
    or open <http://127.0.0.1:5000/meals/new> directly. The older `/add` URL
-   works too. Add entries are saved to MongoDB; the other screens currently
+   works too. Add and Edit entries are saved to MongoDB. Use **View and edit saved entries**
+   on the Add page (or `/entries`) to select a real record. The other screens currently
    retain their labeled sample-data previews until their backend features
    are connected. New records will not yet appear in those sample lists.
    <http://127.0.0.1:5000/db-test> checks the database connection.
@@ -68,15 +69,17 @@ See instructions. Delete this line and place a link to the user stories here.
    and open <http://127.0.0.1:5001/>. That separate preview does not save data;
    use `python app.py` on port 5000 to test the real Add feature.
 
-7. Run the Add feature's automated tests from the repository root:
+7. Install test dependencies and run the Add and Edit automated tests from the repository root:
 
    ```bash
+   python -m pip install -r requirements-dev.txt
    python -m unittest discover -s tests -v
    ```
 
    These tests replace MongoDB with a test double and never write to Atlas.
    See [Add food entry integration notes](docs/add-food-entry.md) for the
    proposed document fields, manual checks, and homepage integration.
+   See [Edit integration notes](docs/edit-food-entry.md) for real-record URLs and limitations.
 
 ## Task boards
 
