@@ -11,6 +11,8 @@ from flask import Flask, redirect, request, url_for, session, abort, flash, get_
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
+from bson.objectid import ObjectId
+from bson.errors import InvalidId
 
 load_dotenv()
 
@@ -118,6 +120,9 @@ def saved_entries():
                            entries=entries[:50], error=None, page=page,
                            has_next=len(entries) > 50)
 
+@app.route("meals/<meal_id>/delete", methods=["POST"])
+def delete_meal(meal_id):
+    
 
 @app.route("/meals/<meal_id>/edit", methods=["GET", "POST"])
 def edit_meal(meal_id):
@@ -202,6 +207,7 @@ def add_food_entry():
         today=date.today().isoformat() if request.method == "GET" else "",
         saved=request.method == "GET" and request.args.get("saved") == "1",
     ), status_code
+
 
 
 if __name__ == "__main__":
