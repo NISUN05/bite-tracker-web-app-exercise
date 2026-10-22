@@ -11,8 +11,6 @@ from flask import Flask, redirect, request, url_for, session, abort, flash, get_
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
-from bson.objectid import ObjectId
-from bson.errors import InvalidId
 
 load_dotenv()
 
@@ -104,6 +102,7 @@ app.add_url_rule(
 )
 
 
+@app.route("/history", endpoint="history")
 @app.route("/entries")
 def saved_entries():
     """Small real-data editing entry point while team history is integrated."""
@@ -120,10 +119,12 @@ def saved_entries():
                            entries=entries[:50], error=None, page=page,
                            has_next=len(entries) > 50)
 
-@app.route("meals/<meal_id>/delete", methods=["POST"])
-def delete_meal(meal_id):
-    
+@app.route("/meals/<meal_id>/delete", methods=["POST"], endpoint="delete_meal_submit")
+def delete_meal_submit(meal_id):
+    abort(501, description="Deleting saved entries is not implemented yet.")
 
+
+@app.route("/edit/<meal_id>", methods=["GET", "POST"], endpoint="edit_entry")
 @app.route("/meals/<meal_id>/edit", methods=["GET", "POST"])
 def edit_meal(meal_id):
     if not ObjectId.is_valid(meal_id):
@@ -135,7 +136,12 @@ def edit_meal(meal_id):
     token = session.setdefault("edit_csrf", secrets.token_hex(32))
     errors = []
     status = 200
-    values = request.form if request.method == "POST" else {}
+    form = request.form.copy()
+    if request.endpoint == "edit_entry":
+        for source, target in (("item_name", "food_name"), ("meal_category", "meal")):
+            if target not in form and source in form:
+                form[target] = form[source]
+    values = form if request.method == "POST" else {}
     if request.method == "POST" and not hmac.compare_digest(
         request.form.get("csrf_token", "").encode("utf-8"), token.encode("utf-8")
     ):
@@ -146,15 +152,17 @@ def edit_meal(meal_id):
             existing = food_entries.find_one({"_id": entry_id})
             if existing is None:
                 abort(404)
-            values = request.form if request.method == "POST" else existing
+            values = form if request.method == "POST" else existing
             if request.method == "POST":
-                entry, errors = validate_food_entry(request.form)
+                entry, errors = validate_food_entry(form)
                 if errors:
                     status = 400
                 else:
                     result = food_entries.update_one({"_id": entry_id}, {"$set": entry})
                     if not result.matched_count:
                         abort(404)
+                    if request.endpoint == "edit_entry":
+                        return redirect(url_for("history"), code=303)
                     flash("Changes saved successfully.", "edit:" + meal_id)
                     return redirect(url_for("edit_meal", meal_id=meal_id), code=303)
         except PyMongoError:

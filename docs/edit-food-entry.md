@@ -40,3 +40,17 @@ Tests use mocks and mongomock only: Add → list → Edit → stored update → 
 zero-change saves, validation, CSRF, missing/deleted records, metadata
 preservation, HTML escaping, pagination and database failures. These checks do
 not establish connectivity to the shared Atlas cluster.
+
+## Additional edit entry point
+
+The teammate's `/edit/<id>` flow is available alongside `/meals/<id>/edit`.
+It accepts `item_name` and `meal_category` as form aliases for `food_name` and
+`meal`, uses the existing styled form, and redirects to `/history` after saving.
+`/history` uses the saved-entry list. Dates remain YYYY-MM-DD strings to match
+Add and current sorting; validation and CSRF checks apply to both edit routes.
+The supplied snippet's datetime storage and missing-value defaults are not
+used, to avoid changing the existing data contract or silently clearing values.
+
+The incomplete Delete POST stub previously prevented the application from
+importing. It now returns 501 without modifying data until Delete is implemented;
+its separate GET preview is unchanged.
