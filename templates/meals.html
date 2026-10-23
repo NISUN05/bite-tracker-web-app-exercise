@@ -1,7 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-<section class="meal-log" aria-labelledby="log-title">
-  <header class="section-heading"><h2 id="log-title">Your meals <span class="count">{{ meals|length }}</span></h2><a class="primary-button compact" href="{{ url_for('add_meal') }}">Add a meal</a></header>
-  {% include "_meal_list.html" %}
-</section>
-{% endblock %}

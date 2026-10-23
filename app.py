@@ -28,6 +28,10 @@ def db_test():
 def dashboard():
     return render_template("dashboard.html")
 
+@app.route("/dashboard")
+def dashboard2():
+    return render_template("dashboard.html")
+
 @app.route("/today")
 def today():
         today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -65,6 +69,13 @@ def today():
             "fat": total_fat
         }
 
+        return render_template(
+            "today.html",
+            grouped_entries=grouped_entries,
+            summary=summary,
+            today=today
+        )
+
 @app.route("/add", methods=["GET", "POST"])
 def add_entry():
     if request.method == "POST":
@@ -90,6 +101,44 @@ def add_entry():
 
     return render_template("add_entry.html", categories=MEAL_CATEGORIES)
 
+@app.route("/edit/<entry_id>", methods=["GET", "POST"])
+def edit_entry(entry_id):
+    entry = food_entries.find_one({"_id": ObjectId(entry_id)})
+
+    if request.method == "POST":
+        date_input = request.form.get("date")
+        
+        if date_input:
+            date = datetime.strptime(date_input, "%Y-%m-%d")
+        else:
+            date = datetime.now()
+
+        updated_values = {
+            "$set": {
+                "date": date,
+                "item_name": request.form.get("item_name"),
+                "meal_category": request.form.get("meal_category"),
+                "calories": float(request.form.get("calories", 0)),
+                "protein": float(request.form.get("protein", 0)),
+                "carbs": float(request.form.get("carbs", 0)),
+                "fat": float(request.form.get("fat", 0))
+            }
+        }
+        
+        food_entries.update_one({"_id": ObjectId(entry_id)}, updated_values)
+        return redirect("/today")
+
+    return render_template("edit_meal.html", entry=entry, categories=MEAL_CATEGORIES)
+
+@app.route("/delete/<entry_id>", methods=["GET", "POST"])
+def delete_entry(entry_id):
+    entry = food_entries.find_one({"_id": ObjectId(entry_id)})
+
+    if request.method == "POST":
+        food_entries.delete_one({"_id": ObjectId(entry_id)})
+        return redirect("/today")
+
+    return render_template("delete_meal.html", entry=entry)
 
 if __name__ == "__main__":
     app.run(debug=True)
