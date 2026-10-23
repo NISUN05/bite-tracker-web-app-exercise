@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <title>Edit Food</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Edit Food</h1>
+  <p>
+  <a href="/">Main Page</a> |
+  <a href="/today">Today</a> |
+  <a href="/add">Add food</a> |
+  <a href="/history">History</a> |
+  <a href="/search">Search</a>
+</p>
+
+  <form method="post">
+    <p>Date: <input type="date" name="date" value="{{ entry.date.strftime('%Y-%m-%d') }}"></p>
+    <p>Food name: <input type="text" name="item_name" value="{{ entry.item_name }}" required></p>
+    <p>Meal:
+      <select name="meal_category">
+        {% for c in categories %}
+          <option value="{{ c }}" {% if entry.meal_category == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </p>
+    <p>Calories: <input type="number" step="any" name="calories" value="{{ entry.calories }}"></p>
+    <p>Protein (g): <input type="number" step="any" name="protein" value="{{ entry.protein }}"></p>
+    <p>Carbs (g): <input type="number" step="any" name="carbs" value="{{ entry.carbs }}"></p>
+    <p>Fat (g): <input type="number" step="any" name="fat" value="{{ entry.fat }}"></p>
+    <button type="submit">Save</button>
+  </form>
+</body>
+</html>
