@@ -17,7 +17,7 @@ client = MongoClient(mongo_uri, tlsCAFile=certifi.where())
 db = client[database_name]
 food_entries = db["food_entries"]
 
-MEAL_CHOICES = ["Breakfast", "Lunch", "Dinner", "Snacks"]
+MEAL_CATEGORIES = ["Breakfast", "Lunch", "Dinner", "Snacks"]
 
 @app.route("/db-test")
 def db_test():
@@ -66,39 +66,29 @@ def today():
         }
 
 @app.route("/add", methods=["GET", "POST"])
-@app.route("/meals/new", methods=["GET", "POST"], endpoint="add_meal")
-def add_food_entry():
-    errors = []
-    status_code = 200
-
+def add_entry():
     if request.method == "POST":
-        entry, errors = validate_food_entry(request.form)
-        if errors:
-            status_code = 400
+        date_input = request.form.get("date")
+        
+        if date_input:
+            date = datetime.strptime(date_input, "%Y-%m-%d")
         else:
-            try:
-                food_entries.insert_one(entry)
-            except PyMongoError as error:
-                app.logger.warning("Food entry save failed: %s", type(error).__name__)
-                errors.append(
-                    "We couldn't confirm that your entry was saved. "
-                    "Please check before submitting again."
-                )
-                status_code = 503
-            else:
-                # A fresh GET after saving prevents refresh from repeating the POST.
-                return redirect(url_for("add_meal", saved="1"), code=303)
+            date = datetime.now()
 
-    return frontend.screen(
-        "add_food_entry.html",
-        "Add Food Entry",
-        subtitle="Record a meal and its nutrition information",
-        preview=False,
-        errors=errors,
-        meal_choices=MEAL_CHOICES,
-        today=date.today().isoformat() if request.method == "GET" else "",
-        saved=request.method == "GET" and request.args.get("saved") == "1",
-    ), status_code
+        food_item = {
+            "date": date,
+            "item_name": request.form.get("item_name"),
+            "meal_category": request.form.get("meal_category"),
+            "calories": float(request.form.get("calories", 0)),
+            "protein": float(request.form.get("protein", 0)),
+            "carbs": float(request.form.get("carbs", 0)),
+            "fat": float(request.form.get("fat", 0))
+        }
+
+        food_entries.insert_one(food_item)
+        return redirect(url_for("today"))
+
+    return render_template("add_entry.html", categories=MEAL_CATEGORIES)
 
 
 if __name__ == "__main__":
