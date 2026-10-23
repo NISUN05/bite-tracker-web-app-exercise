@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <title>Today's Meals</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>What You Ate Today</h1>
+  <p>
+  <a href="/">Main Page</a> |
+  <a href="/add">Add food</a> |
+  <a href="/history">History</a> |
+  <a href="/search">Search</a>
+</p>
+  <p>{{ today.strftime("%B %d, %Y") }}</p>
+
+  <h2>Total Macros</h2>
+  <p>Calories: {{ summary.calories }}</p>
+  <p>Protein: {{ summary.protein }} g</p>
+  <p>Carbs: {{ summary.carbs }} g</p>
+  <p>Fat: {{ summary.fat }} g</p>
+
+  {% for category, entries in grouped_entries.items() %}
+    <h2>{{ category }}</h2>
+    {% if entries %}
+      <ul>
+        {% for entry in entries %}
+          <li>
+            {{ entry.item_name}} - {{ entry.calories }} cal
+            | <a href="/edit/{{ entry._id }}">Edit</a>
+            | <a href="/delete/{{ entry._id }}">Delete</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Nothing logged yet.</p>
+    {% endif %}
+  {% endfor %}
+
+  </body>
+  </html>
