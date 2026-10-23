@@ -8,7 +8,7 @@ Bite Tracker helps users record, review, and organize their daily food intake by
 
 ## User stories
 
-See instructions. Delete this line and place a link to the user stories here.
+[Link](https://github.com/NISUN05/bite-tracker-web-app-exercise/issues)
 
 ## Steps necessary to run the software
 
@@ -84,3 +84,5 @@ See instructions. Delete this line and place a link to the user stories here.
 ## Task boards
 
 [Bite Tracker - Sprint 1](https://github.com/users/NISUN05/projects/10/views/2)
+
+[Bite Tracker - Sprint 2](https://github.com/users/NISUN05/projects/11/views/2)
