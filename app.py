@@ -2,12 +2,12 @@ import math
 import os
 import secrets
 import hmac
-from datetime import date, datetime
+from datetime import date
 
 import certifi
 import frontend_app as frontend
 from dotenv import load_dotenv
-from flask import Flask, redirect, request, url_for, session, abort, flash, get_flashed_messages, render_template
+from flask import Flask, redirect, request, url_for, session, abort, flash, get_flashed_messages
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
