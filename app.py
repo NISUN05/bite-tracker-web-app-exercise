@@ -1,7 +1,11 @@
+import math
 import os
+import secrets
+import hmac
+from datetime import date
+
 import certifi
-from datetime import datetime, timedelta
-from bson.objectid import ObjectId
+import frontend_app as frontend
 from dotenv import load_dotenv
 from flask import Flask, redirect, request, url_for, session, abort, flash, get_flashed_messages
 from bson import ObjectId
@@ -13,11 +17,23 @@ from bson.errors import InvalidId
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY") or secrets.token_hex(32)
+app.config.update(SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax")
 
 mongo_uri = os.getenv("MONGO_URI")
 database_name = os.getenv("MONGO_DBNAME")
 
-client = MongoClient(mongo_uri, tlsCAFile=certifi.where())
+if not mongo_uri or not database_name:
+    raise RuntimeError(
+        "Missing MONGO_URI or MONGO_DBNAME in .env"
+    )
+
+client = MongoClient(
+    mongo_uri,
+    tlsCAFile=certifi.where(),
+    serverSelectionTimeoutMS=10000
+)
+
 db = client[database_name]
 food_entries = db["food_entries"]
 
@@ -156,46 +172,6 @@ def db_test():
     client.admin.command("ping")
     return "Successfully connected to MongoDB!"
 
-@app.route("/")
-def dashboard():
-    return render_template("dashboard.html")
-
-@app.route("/today")
-def today():
-        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        tomorrow = today + timedelta(days=1)
-    
-        query = {"date": {"$gte": today, "$lt": tomorrow}}
-        entries_today = list(food_entries.find(query))
-    
-        grouped_entries = {
-            "Breakfast": [],
-            "Lunch": [],
-            "Dinner": [],
-            "Snacks": []
-        }
-        
-        total_calories = 0.0
-        total_protein = 0.0
-        total_carbs = 0.0
-        total_fat = 0.0
-    
-        for entry in entries_today:
-            category = entry.get("meal_category")
-            if category in grouped_entries:
-                grouped_entries[category].append(entry)
-    
-            total_calories += float(entry.get("calories", 0))
-            total_protein += float(entry.get("protein", 0))
-            total_carbs += float(entry.get("carbs", 0))
-            total_fat += float(entry.get("fat", 0))
-    
-        summary = {
-            "calories": total_calories,
-            "protein": total_protein,
-            "carbs": total_carbs,
-            "fat": total_fat
-        }
 
 @app.route("/add", methods=["GET", "POST"])
 @app.route("/meals/new", methods=["GET", "POST"], endpoint="add_meal")
