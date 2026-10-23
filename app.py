@@ -2,15 +2,17 @@ import math
 import os
 import secrets
 import hmac
-from datetime import date
+from datetime import date, datetime
 
 import certifi
 import frontend_app as frontend
 from dotenv import load_dotenv
-from flask import Flask, redirect, request, url_for, session, abort, flash, get_flashed_messages
+from flask import Flask, redirect, request, url_for, session, abort, flash, get_flashed_messages, render_template
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
+from bson.objectid import ObjectId
+from bson.errors import InvalidId
 
 load_dotenv()
 
@@ -102,7 +104,6 @@ app.add_url_rule(
 )
 
 
-@app.route("/history", endpoint="history")
 @app.route("/entries")
 def saved_entries():
     """Small real-data editing entry point while team history is integrated."""
@@ -119,12 +120,10 @@ def saved_entries():
                            entries=entries[:50], error=None, page=page,
                            has_next=len(entries) > 50)
 
-@app.route("/meals/<meal_id>/delete", methods=["POST"], endpoint="delete_meal_submit")
-def delete_meal_submit(meal_id):
-    abort(501, description="Deleting saved entries is not implemented yet.")
+@app.route("meals/<meal_id>/delete", methods=["POST"])
+def delete_meal(meal_id):
+    
 
-
-@app.route("/edit/<meal_id>", methods=["GET", "POST"], endpoint="edit_entry")
 @app.route("/meals/<meal_id>/edit", methods=["GET", "POST"])
 def edit_meal(meal_id):
     if not ObjectId.is_valid(meal_id):
@@ -136,12 +135,7 @@ def edit_meal(meal_id):
     token = session.setdefault("edit_csrf", secrets.token_hex(32))
     errors = []
     status = 200
-    form = request.form.copy()
-    if request.endpoint == "edit_entry":
-        for source, target in (("item_name", "food_name"), ("meal_category", "meal")):
-            if target not in form and source in form:
-                form[target] = form[source]
-    values = form if request.method == "POST" else {}
+    values = request.form if request.method == "POST" else {}
     if request.method == "POST" and not hmac.compare_digest(
         request.form.get("csrf_token", "").encode("utf-8"), token.encode("utf-8")
     ):
@@ -152,17 +146,15 @@ def edit_meal(meal_id):
             existing = food_entries.find_one({"_id": entry_id})
             if existing is None:
                 abort(404)
-            values = form if request.method == "POST" else existing
+            values = request.form if request.method == "POST" else existing
             if request.method == "POST":
-                entry, errors = validate_food_entry(form)
+                entry, errors = validate_food_entry(request.form)
                 if errors:
                     status = 400
                 else:
                     result = food_entries.update_one({"_id": entry_id}, {"$set": entry})
                     if not result.matched_count:
                         abort(404)
-                    if request.endpoint == "edit_entry":
-                        return redirect(url_for("history"), code=303)
                     flash("Changes saved successfully.", "edit:" + meal_id)
                     return redirect(url_for("edit_meal", meal_id=meal_id), code=303)
         except PyMongoError:
@@ -216,6 +208,36 @@ def add_food_entry():
         saved=request.method == "GET" and request.args.get("saved") == "1",
     ), status_code
 
+
+
+@app.route("/edit/<entry_id>", methods=["GET", "POST"])
+def edit_entry(entry_id):
+    entry = food_entries.find_one({"_id": ObjectId(entry_id)})
+
+    if request.method == "POST":
+        date_input = request.form.get("date")
+
+        if date_input:
+            date = datetime.strptime(date_input, "%Y-%m-%d")
+        else:
+            date = datetime.now()
+
+        updated_values = {
+            "$set": {
+                "date": date,
+                "item_name": request.form.get("item_name"),
+                "meal_category": request.form.get("meal_category"),
+                "calories": float(request.form.get("calories", 0)),
+                "protein": float(request.form.get("protein", 0)),
+                "carbs": float(request.form.get("carbs", 0)),
+                "fat": float(request.form.get("fat", 0))
+            }
+        }
+
+        food_entries.update_one({"_id": ObjectId(entry_id)}, updated_values)
+        return redirect("/history")
+
+    return render_template("edit_entry.html", entry=entry, categories=MEAL_CATEGORIES)
 
 
 if __name__ == "__main__":

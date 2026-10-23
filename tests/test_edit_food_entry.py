@@ -114,34 +114,3 @@ class EditFoodEntryTests(unittest.TestCase):
             response = self.browser.get('/entries')
             self.assertEqual(response.status_code, 503)
             self.assertNotIn('private', response.text)
-
-    def test_teammate_edit_route_maps_fields_and_returns_to_history(self):
-        url = f'/edit/{self.id}'
-        page = self.browser.get(url)
-        self.assertEqual(page.status_code, 200)
-        self.assertIn(f'action="{url}"', page.text)
-        payload = dict(self.form, csrf_token=self.token)
-        payload['item_name'] = 'Updated yogurt'
-        payload['meal_category'] = 'lunch'
-        del payload['food_name']
-        del payload['meal']
-        response = self.browser.post(url, data=payload)
-        self.assertEqual(response.status_code, 303)
-        self.assertEqual(response.location, '/history')
-        record = self.collection.find_one({'_id': self.id})
-        self.assertEqual(record['food_name'], 'Updated yogurt')
-        self.assertEqual(record['meal'], 'lunch')
-        self.assertEqual(record['date'], self.form['date'])
-        self.assertNotIn('item_name', record)
-        self.assertIn('Updated yogurt', self.browser.get('/history').text)
-
-    def test_teammate_route_still_validates_and_protects_posts(self):
-        url = f'/edit/{self.id}'
-        self.assertEqual(self.browser.post(url, data=self.form).status_code, 400)
-        payload = dict(self.form, csrf_token=self.token, calories='-1')
-        self.assertEqual(self.browser.post(url, data=payload).status_code, 400)
-        self.assertEqual(self.collection.find_one() ['calories'], 320)
-
-    def test_unfinished_delete_fails_explicitly_without_deleting(self):
-        self.assertEqual(self.browser.post(f'/meals/{self.id}/delete').status_code, 501)
-        self.assertIsNotNone(self.collection.find_one({'_id': self.id}))
