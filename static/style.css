@@ -1,0 +1,70 @@
+/* Page background and default text */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f1f8f1;
+  color: #222;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Headings */
+h1 {
+  color: #2e7d32;
+}
+
+h2 {
+  color: #388e3c;
+}
+
+/* Links */
+a {
+  color: #2e7d32;
+}
+
+a:hover {
+  color: #1b5e20;
+}
+
+/* Buttons */
+button {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1b5e20;
+}
+
+/* Form inputs */
+input, select {
+  padding: 5px;
+  border: 1px solid #81c784;
+  border-radius: 4px;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: white;
+}
+
+th {
+  background-color: #2e7d32;
+  color: white;
+  text-align: left;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #c8e6c9;
+}
+
+tr:nth-child(even) {
+  background-color: #e8f5e9;
+}
