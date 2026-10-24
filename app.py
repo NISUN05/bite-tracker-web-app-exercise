@@ -187,6 +187,11 @@ def weekly_summary():
         daily_summary=daily_summary,
         weekly_totals=weekly_totals,
     )
+  
+@app.route("/history")
+def history():
+    all_entries = list(food_entries.find({"date": {"$exists": True}}).sort("date", DESCENDING))
+    return render_template("history.html", entries=all_entries)
 
 if __name__ == "__main__":
     app.run(debug=True)
