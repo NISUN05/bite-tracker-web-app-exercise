@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <title>Weekly Summary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Weekly Summary</h1>
+  <p>
+  <a href="/dashboard">Main Page</a> |
+  <a href="/add">Add food</a> |
+  <a href="/history">History</a> |
+  <a href="/search">Search</a>
+</p>
+
+<p>
+    {{ week_start.strftime("%B %d, %Y") }} -
+    {{ week_end.strftime("%B %d, %Y") }}
+  </p>
+
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>Calories (kcal)</th>
+      <th>Protein (g)</th>
+      <th>Carbs (g)</th>
+      <th>Fat (g)</th>
+    </tr>
+  
+    {% for day in daily_summary %}
+    <tr>
+      <td>{{ day.date.strftime("%a, %b %d") }}</td>
+      <td>{{ day.calories }}</td>
+      <td>{{ day.protein }}</td>
+      <td>{{ day.carbs }}</td>
+      <td>{{ day.fat }}</td>
+    </tr>
+    {% endfor %}
+  
+    <tr>
+      <th>Weekly Total</th>
+      <td>{{ weekly_totals.calories }}</td>
+      <td>{{ weekly_totals.protein }}</td>
+      <td>{{ weekly_totals.carbs }}</td>
+      <td>{{ weekly_totals.fat }}</td>
+    </tr>
+  </table>
+
+</body>
+</html>
