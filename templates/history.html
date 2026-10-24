@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <title>Food History</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>What You've Eaten In The Past</h1>
+  <p>
+  <a href="/">Main Page</a> |
+  <a href="/today">Today</a> |
+  <a href="/add">Add food</a> |
+  <a href="/search">Search</a>
+</p>
+  <table border="1">
+    <tr>
+      <th>Date</th>
+      <th>Food</th>
+      <th>Meal</th>
+      <th>Calories</th>
+      <th>Protein</th>
+      <th>Carbs</th>
+      <th>Fat</th>
+      <th></th>
+    </tr>
+    {% for entry in entries %}
+      <tr>
+        <td>{{ entry.date.strftime("%Y-%m-%d") }}</td>
+        <td>{{ entry.item_name }}</td>
+        <td>{{ entry.meal_category }}</td>
+        <td>{{ entry.calories }}</td>
+        <td>{{ entry.protein }}</td>
+        <td>{{ entry.carbs }}</td>
+        <td>{{ entry.fat }}</td>
+        <td>
+          <a href="/edit/{{ entry._id }}">Edit</a>
+          <a href="/delete/{{ entry._id }}">Delete</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
