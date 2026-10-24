@@ -145,5 +145,28 @@ def history():
     all_entries = list(food_entries.find({"date": {"$exists": True}}).sort("date", DESCENDING))
     return render_template("history.html", entries=all_entries)
 
+@app.route("/search", methods=["GET"])
+def search():
+    search_text = request.args.get("query", "").strip()
+    date_text = request.args.get("date_filter", "").strip()
+    category_text = request.args.get("category_filter", "").strip()
+
+    filter_conditions = {"date": {"$exists": True}}
+
+    if search_text != "":
+        filter_conditions["item_name"] = {"$regex": search_text, "$options": "i"}
+
+    if date_text != "":
+        target_date = datetime.strptime(date_text, "%Y-%m-%d")
+        next_day = target_date + timedelta(days=1)
+        filter_conditions["date"] = {"$gte": target_date, "$lt": next_day}
+
+    if category_text != "":
+        filter_conditions["meal_category"] = category_text
+
+    search_results = list(food_entries.find(filter_conditions).sort("date", DESCENDING))
+
+    return render_template("search.html", results=search_results, categories=MEAL_CATEGORIES)
+
 if __name__ == "__main__":
     app.run(debug=True)
