@@ -140,5 +140,10 @@ def delete_entry(entry_id):
 
     return render_template("delete_meal.html", entry=entry)
 
+@app.route("/history")
+def history():
+    all_entries = list(food_entries.find({"date": {"$exists": True}}).sort("date", DESCENDING))
+    return render_template("history.html", entries=all_entries)
+
 if __name__ == "__main__":
     app.run(debug=True)
