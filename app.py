@@ -140,6 +140,54 @@ def delete_entry(entry_id):
 
     return render_template("delete_meal.html", entry=entry)
 
+@app.route("/weekly-summary")
+def weekly_summary():
+    today = datetime.now().replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+    week_start = today - timedelta(days=today.weekday())
+    next_week = week_start + timedelta(days=7)
+
+    # Include every day, even if no meals were logged.
+    daily_totals = {
+        (week_start + timedelta(days=i)).date(): {
+            "calories": 0.0,
+            "protein": 0.0,
+            "carbs": 0.0,
+            "fat": 0.0,
+        }
+        for i in range(7)
+    }
+
+    entries = food_entries.find({
+        "date": {"$gte": week_start, "$lt": next_week}
+    })
+
+    for entry in entries:
+        day = entry["date"].date()
+        for nutrient in daily_totals[day]:
+            daily_totals[day][nutrient] += float(
+                entry.get(nutrient, 0) or 0
+            )
+
+    weekly_totals = {
+        nutrient: sum(day[nutrient] for day in daily_totals.values())
+        for nutrient in ("calories", "protein", "carbs", "fat")
+    }
+
+    daily_summary = [
+        {"date": day, **totals}
+        for day, totals in daily_totals.items()
+    ]
+
+    return render_template(
+        "weekly_summary.html",
+        week_start=week_start,
+        week_end=next_week - timedelta(days=1),
+        daily_summary=daily_summary,
+        weekly_totals=weekly_totals,
+    )
+  
 @app.route("/history")
 def history():
     all_entries = list(food_entries.find({"date": {"$exists": True}}).sort("date", DESCENDING))
