@@ -1,1 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <title>Search</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Search</h1>
+  <p>
+  <a href="/">Main Page</a> |
+  <a href="/today">Today</a> |
+  <a href="/add">Add food</a> |
+  <a href="/history">History</a> |
+</p>
+
+  <form method="get" action="/search">
+    Food: <input type="text" name="query" value="{{ request.args.get('query', '') }}">
+    Date: <input type="date" name="date_filter" value="{{ request.args.get('date_filter', '') }}">
+    Meal:
+    <select name="category_filter">
+      <option value="">All</option>
+      {% for c in categories %}
+        <option value="{{ c }}" {% if request.args.get('category_filter') == c %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+  </form>
+
+  {% if results %}
+  <table border="1">
+    <tr>
+      <th>Date</th>
+      <th>Food</th>
+      <th>Meal</th>
+      <th>Calories</th>
+      <th>Protein</th>
+      <th>Carbs</th>
+      <th>Fat</th>
+      <th></th>
+    </tr>
+    {% for entry in results %}
+      <tr>
+        <td>{{ entry.date.strftime("%Y-%m-%d") }}</td>
+        <td>{{ entry.item_name }}</td>
+        <td>{{ entry.meal_category }}</td>
+        <td>{{ entry.calories }}</td>
+        <td>{{ entry.protein }}</td>
+        <td>{{ entry.carbs }}</td>
+        <td>{{ entry.fat }}</td>
+        <td>
+          <a href="/edit/{{ entry._id }}">Edit</a>
+          <a href="/delete/{{ entry._id }}">Delete</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+    <p>No results.</p>
+  {% endif %}
+</body>
+</html>
 
