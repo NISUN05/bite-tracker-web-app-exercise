@@ -198,65 +198,69 @@ def weekly_goal():
     next_week = week_start + timedelta(days=7)
     week_end = next_week - timedelta(days=1)
     week_key = week_start.strftime("%Y-%m-%d")
-
-    fields = {
-        "calories": "calories_max",
-        "protein": "protein_min",
-        "carbs": "carbs_max",
-        "fat": "fat_max"
-    }
     query = {"_id": week_key}
+    fields = {
+        "calories": "calories_max", "protein": "protein_min", "carbs": "carbs_max", "fat": "fat_max"
+    }
 
     if request.method == "POST":
-        values = {field: float(request.form[field]) for field in fields.values()}
-        if any(value <= 0 for value in values.values()):
-            return "Goals must be greater than zero.", 400
+        values = {}
+        for field in fields.values():
+            values[field] = float(request.form[field])
+            if values[field] <= 0:
+                return "Goals must be greater than zero."  
+                    
         weekly_goals.update_one(query, {"$set": values}, upsert=True)
         return redirect(url_for("weekly_goal", week=week_key))
 
     goal = weekly_goals.find_one(query)
-    entries = [] if week_start > today else list(food_entries.find({
-        "date": {"$gte": week_start, "$lt": next_week}
-    }))
-    totals = {
-        nutrient: sum(float(entry.get(nutrient, 0) or 0) for entry in entries)
-        for nutrient in fields
-    }
+    entries = []
+    if week_start <= today:
+        entries = list(food_entries.find({
+            "date": {"$gte": week_start, "$lt": next_week}
+        }))
+
+    totals = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
+
+    for entry in entries:
+        for nutrient in totals:
+            totals[nutrient] += float(entry.get(nutrient, 0) or 0)
 
     progress = {}
     results = {}
+
     if goal and entries:
         for nutrient, field in fields.items():
             actual = totals[nutrient]
             target = goal[field]
             progress[nutrient] = {
-                "actual": actual,
-                "target": target,
+                "actual": actual, "target": target,
                 "percent": round(actual / target * 100, 1),
                 "difference": actual - target
             }
-            results[nutrient] = (
-                actual >= target if nutrient == "protein" else actual <= target
-            )
+            if nutrient == "protein":
+                results[nutrient] = actual >= target
+            else:
+                results[nutrient] = actual <= target
 
     can_view_result = bool(today >= week_end and progress)
     show_result = can_view_result and request.args.get("result") == "yes"
+    all_met = None
+
+    if show_result:
+        all_met = all(results.values())
+    else:
+        results = None
 
     return render_template(
         "weekly_goal.html",
-        week_start=week_start,
-        week_end=week_end,
-        week_key=week_key,
-        is_future_week=week_start > today,
-        goal=goal,
-        weekly_totals=totals,
-        progress=progress,
-        can_view_result=can_view_result,
-        show_result=show_result,
-        results=results if show_result else None,
-        all_met=all(results.values()) if show_result else None
+        week_start=week_start, week_end=week_end, week_key=week_key,
+        is_future_week=week_start > today, goal=goal,
+        weekly_totals=totals, progress=progress,
+        can_view_result=can_view_result, show_result=show_result,
+        results=results, all_met=all_met
     )
-  
+
 @app.route("/history")
 def history():
     all_entries = list(food_entries.find({"date": {"$exists": True}}).sort("date", DESCENDING))
