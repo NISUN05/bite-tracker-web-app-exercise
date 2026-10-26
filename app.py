@@ -16,6 +16,7 @@ database_name = os.getenv("MONGO_DBNAME")
 client = MongoClient(mongo_uri, tlsCAFile=certifi.where())
 db = client[database_name]
 food_entries = db["food_entries"]
+weekly_goals = db["weekly_goals"]
 
 MEAL_CATEGORIES = ["Breakfast", "Lunch", "Dinner", "Snacks"]
 
@@ -198,12 +199,29 @@ def weekly_goal():
     week_end = next_week - timedelta(days=1)
     week_key = week_start.strftime("%Y-%m-%d")
 
+    fields = {
+        "calories": "calories_max",
+        "protein": "protein_min",
+        "carbs": "carbs_max",
+        "fat": "fat_max"
+    }
+    query = {"_id": week_key}
+
+    if request.method == "POST":
+        values = {field: float(request.form[field]) for field in fields.values()}
+        if any(value <= 0 for value in values.values()):
+            return "Goals must be greater than zero.", 400
+        weekly_goals.update_one(query, {"$set": values}, upsert=True)
+        return redirect(url_for("weekly_goal", week=week_key))
+
+    goal = weekly_goals.find_one(query)
     return render_template(
         "weekly_goal.html",
         week_start=week_start,
         week_end=week_end,
         week_key=week_key,
-        is_future_week=week_start > today
+        is_future_week=week_start > today,
+        goal=goal
     )
   
 @app.route("/history")
