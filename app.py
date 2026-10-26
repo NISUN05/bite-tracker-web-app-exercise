@@ -19,6 +19,7 @@ food_entries = db["food_entries"]
 weekly_goals = db["weekly_goals"]
 
 MEAL_CATEGORIES = ["Breakfast", "Lunch", "Dinner", "Snacks"]
+NUTRIENTS = ["calories", "protein", "carbs", "fat"]
 
 @app.route("/db-test")
 def db_test():
@@ -74,6 +75,17 @@ def today():
             today=today
         )
 
+def parse_nutrients(form):
+    values = {}
+    for nutrient in NUTRIENTS:
+        try:
+            values[nutrient] = float(form.get(nutrient) or 0)
+        except ValueError:
+            return None, "Food values must be numbers."
+        if values[nutrient] < 0:
+            return None, "Food values cannot be negative."
+    return values, None
+
 @app.route("/add", methods=["GET", "POST"])
 def add_entry():
     if request.method == "POST":
@@ -84,14 +96,15 @@ def add_entry():
         else:
             date = datetime.now()
 
+        nutrients, error = parse_nutrients(request.form)
+        if error:
+            return error
+
         food_item = {
             "date": date,
             "item_name": request.form.get("item_name"),
             "meal_category": request.form.get("meal_category"),
-            "calories": float(request.form.get("calories", 0)),
-            "protein": float(request.form.get("protein", 0)),
-            "carbs": float(request.form.get("carbs", 0)),
-            "fat": float(request.form.get("fat", 0))
+            **nutrients
         }
 
         food_entries.insert_one(food_item)
@@ -112,15 +125,16 @@ def edit_entry(entry_id):
         else:
             date = datetime.now()
 
+        nutrients, error = parse_nutrients(request.form)
+        if error:
+            return error
+
         updated_values = {
             "$set": {
                 "date": date,
                 "item_name": request.form.get("item_name"),
                 "meal_category": request.form.get("meal_category"),
-                "calories": float(request.form.get("calories", 0)),
-                "protein": float(request.form.get("protein", 0)),
-                "carbs": float(request.form.get("carbs", 0)),
-                "fat": float(request.form.get("fat", 0))
+                **nutrients
             }
         }
         
