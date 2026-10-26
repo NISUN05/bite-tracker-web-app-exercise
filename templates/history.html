@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Food History</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -12,6 +13,7 @@
   <a href="/add">Add food</a> |
   <a href="/search">Search</a>
 </p>
+<div style="overflow-x:auto;">
   <table border="1">
     <tr>
       <th>Date</th>
@@ -39,5 +41,6 @@
       </tr>
     {% endfor %}
   </table>
+  </div>
 </body>
 </html>
