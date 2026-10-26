@@ -27,8 +27,8 @@ cp env.example .env            # Windows: copy env.example .env
 Then open `.env` and fill in your MongoDB details:
 
 ```
-MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority
 MONGO_DBNAME=bite_tracker
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority
 ```
 
 If you were given a `.env` file, just put it in the project folder instead.
