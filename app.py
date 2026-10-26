@@ -223,6 +223,18 @@ def weekly_goal():
         for nutrient in fields
     }
 
+    progress = {}
+    if goal and entries:
+        for nutrient, field in fields.items():
+            actual = totals[nutrient]
+            target = goal[field]
+            progress[nutrient] = {
+                "actual": actual,
+                "target": target,
+                "percent": round(actual / target * 100, 1),
+                "difference": actual - target
+            }
+
     return render_template(
         "weekly_goal.html",
         week_start=week_start,
@@ -230,7 +242,8 @@ def weekly_goal():
         week_key=week_key,
         is_future_week=week_start > today,
         goal=goal,
-        weekly_totals=totals
+        weekly_totals=totals,
+        progress=progress
     )
   
 @app.route("/history")
