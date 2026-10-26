@@ -26,11 +26,12 @@
         {% endfor %}
       </select>
     </p>
-    <p>Calories: <input type="number" step="any" name="calories" value="0"></p>
-    <p>Protein (g): <input type="number" step="any" name="protein" value="0"></p>
-    <p>Carbs (g): <input type="number" step="any" name="carbs" value="0"></p>
-    <p>Fat (g): <input type="number" step="any" name="fat" value="0"></p>
+    <p>Calories: <input type="number" step="any" min="0" name="calories" value="0"></p>
+    <p>Protein (g): <input type="number" step="any" min="0" name="protein" value="0"></p>
+    <p>Carbs (g): <input type="number" step="any" min="0" name="carbs" value="0"></p>
+    <p>Fat (g): <input type="number" step="any" min="0" name="fat" value="0"></p>
     <button type="submit">Add</button>
   </form>
 </body>
 </html>
+

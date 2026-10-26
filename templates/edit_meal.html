@@ -27,10 +27,10 @@
         {% endfor %}
       </select>
     </p>
-    <p>Calories: <input type="number" step="any" name="calories" value="{{ entry.calories }}"></p>
-    <p>Protein (g): <input type="number" step="any" name="protein" value="{{ entry.protein }}"></p>
-    <p>Carbs (g): <input type="number" step="any" name="carbs" value="{{ entry.carbs }}"></p>
-    <p>Fat (g): <input type="number" step="any" name="fat" value="{{ entry.fat }}"></p>
+    <p>Calories: <input type="number" step="any" min="0" name="calories" value="{{ entry.calories }}"></p>
+    <p>Protein (g): <input type="number" step="any" min="0" name="protein" value="{{ entry.protein }}"></p>
+    <p>Carbs (g): <input type="number" step="any" min="0" name="carbs" value="{{ entry.carbs }}"></p>
+    <p>Fat (g): <input type="number" step="any" min="0" name="fat" value="{{ entry.fat }}"></p>
     <button type="submit">Save</button>
   </form>
 </body>
