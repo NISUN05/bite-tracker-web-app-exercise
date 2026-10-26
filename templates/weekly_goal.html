@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <title>Weekly Goal</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Weekly Goal</h1>
+  <p>
+  <a href="/dashboard">Main Page</a> |
+  <a href="/today">Today</a> |
+  <a href="/add">Add food</a> |
+  <a href="/history">History</a> |
+  <a href="/search">Search</a> |
+  <a href="/weekly-summary">Weekly Summary</a>
+</p>
+
+  <p>{{ week_start.strftime("%B %d, %Y") }} - {{ week_end.strftime("%B %d, %Y") }}</p>
+
+  <form method="get">
+    <p>Pick a week: <input type="date" name="week" value="{{ week_key }}">
+    <button type="submit">Go</button></p>
+  </form>
+
+  <h2>Set Goals</h2>
+  <form method="post" action="{{ url_for('weekly_goal', week=week_key) }}">
+    <p>Max calories: <input type="number" step="any" min="0" name="calories_max" value="{{ goal.calories_max if goal else '' }}" required></p>
+    <p>Min protein (g): <input type="number" step="any" min="0" name="protein_min" value="{{ goal.protein_min if goal else '' }}" required></p>
+    <p>Max carbs (g): <input type="number" step="any" min="0" name="carbs_max" value="{{ goal.carbs_max if goal else '' }}" required></p>
+    <p>Max fat (g): <input type="number" step="any" min="0" name="fat_max" value="{{ goal.fat_max if goal else '' }}" required></p>
+    <button type="submit">Save Goals</button>
+  </form>
+
+  <h2>Progress</h2>
+  {% if is_future_week %}
+    <p>This week hasn't started yet.</p>
+  {% elif not goal %}
+    <p>No goals set for this week.</p>
+  {% elif not progress %}
+    <p>Nothing logged this week yet.</p>
+  {% else %}
+    <table>
+      <tr>
+        <th>Nutrient</th>
+        <th>Eaten</th>
+        <th>Goal</th>
+        <th>Percent</th>
+        <th>Difference</th>
+        {% if show_result %}<th>Met?</th>{% endif %}
+      </tr>
+      {% for nutrient, p in progress.items() %}
+        <tr>
+          <td>{{ nutrient.capitalize() }}</td>
+          <td>{{ p.actual }}</td>
+          <td>{{ p.target }}</td>
+          <td>{{ p.percent }}%</td>
+          <td>{{ "%+.1f"|format(p.difference) }}</td>
+          {% if show_result %}<td>{{ "Yes" if results[nutrient] else "No" }}</td>{% endif %}
+        </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+
+  {% if show_result %}
+    <h2>Result</h2>
+    {% if all_met %}
+      <p>You met all of your goals this week!</p>
+    {% else %}
+      <p>You missed at least one goal this week.</p>
+    {% endif %}
+  {% elif can_view_result %}
+    <p><a href="{{ url_for('weekly_goal', week=week_key, result='yes') }}">See this week's result</a></p>
+  {% endif %}
+</body>
+</html>
