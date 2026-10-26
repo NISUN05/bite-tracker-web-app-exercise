@@ -41,13 +41,7 @@ python3 app.py
 
 Go to <http://127.0.0.1:5000/db-test> to check the database is connected. It should say "Successfully connected to MongoDB!"
 
-Then open the app at <http://127.0.0.1:5000/>. The other pages are:
-
-- <http://127.0.0.1:5000/today>: today's entries
-- <http://127.0.0.1:5000/add>: add a food entry
-- <http://127.0.0.1:5000/history>: all saved entries
-- <http://127.0.0.1:5000/weekly-summary>: weekly totals
-- <http://127.0.0.1:5000/search>: search by name, date, or meal category
+Then open the app at <http://127.0.0.1:5000/>.
 
 Press `Ctrl + C` to stop the app.
 
