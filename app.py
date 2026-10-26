@@ -215,13 +215,22 @@ def weekly_goal():
         return redirect(url_for("weekly_goal", week=week_key))
 
     goal = weekly_goals.find_one(query)
+    entries = [] if week_start > today else list(food_entries.find({
+        "date": {"$gte": week_start, "$lt": next_week}
+    }))
+    totals = {
+        nutrient: sum(float(entry.get(nutrient, 0) or 0) for entry in entries)
+        for nutrient in fields
+    }
+
     return render_template(
         "weekly_goal.html",
         week_start=week_start,
         week_end=week_end,
         week_key=week_key,
         is_future_week=week_start > today,
-        goal=goal
+        goal=goal,
+        weekly_totals=totals
     )
   
 @app.route("/history")
