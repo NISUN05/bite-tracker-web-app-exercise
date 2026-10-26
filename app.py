@@ -25,11 +25,8 @@ def db_test():
     return "Successfully connected to MongoDB!"
 
 @app.route("/")
-def dashboard():
-    return render_template("dashboard.html")
-
 @app.route("/dashboard")
-def dashboard2():
+def dashboard():
     return render_template("dashboard.html")
 
 @app.route("/today")
@@ -103,6 +100,7 @@ def add_entry():
 
 @app.route("/edit/<entry_id>", methods=["GET", "POST"])
 def edit_entry(entry_id):
+    next_page = request.args.get('next', '/')
     entry = food_entries.find_one({"_id": ObjectId(entry_id)})
 
     if request.method == "POST":
@@ -126,19 +124,20 @@ def edit_entry(entry_id):
         }
         
         food_entries.update_one({"_id": ObjectId(entry_id)}, updated_values)
-        return redirect("/today")
+        return redirect(next_page)
 
-    return render_template("edit_meal.html", entry=entry, categories=MEAL_CATEGORIES)
+    return render_template("edit_meal.html", entry=entry, categories=MEAL_CATEGORIES, next_page=next_page)
 
 @app.route("/delete/<entry_id>", methods=["GET", "POST"])
 def delete_entry(entry_id):
+    next_page = request.args.get('next', '/')
     entry = food_entries.find_one({"_id": ObjectId(entry_id)})
 
     if request.method == "POST":
         food_entries.delete_one({"_id": ObjectId(entry_id)})
-        return redirect("/today")
+        return redirect(next_page)
 
-    return render_template("delete_meal.html", entry=entry)
+    return render_template("delete_meal.html", entry=entry,next_page=next_page)
 
 @app.route("/weekly-summary")
 def weekly_summary():
@@ -148,7 +147,6 @@ def weekly_summary():
     week_start = today - timedelta(days=today.weekday())
     next_week = week_start + timedelta(days=7)
 
-    # Include every day, even if no meals were logged.
     daily_totals = {
         (week_start + timedelta(days=i)).date(): {
             "calories": 0.0,

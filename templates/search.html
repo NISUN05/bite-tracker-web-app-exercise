@@ -8,10 +8,11 @@
 <body>
   <h1>Search</h1>
   <p>
-  <a href="/">Main Page</a> |
+  <a href="/dashboard">Main Page</a> |
   <a href="/today">Today</a> |
   <a href="/add">Add food</a> |
   <a href="/history">History</a> |
+  <a href="/weekly-summary">Weekly Summary</a>
 </p>
 
   <form method="get" action="/search">
@@ -50,8 +51,8 @@
         <td>{{ entry.carbs }}</td>
         <td>{{ entry.fat }}</td>
         <td>
-          <a href="/edit/{{ entry._id }}">Edit</a>
-          <a href="/delete/{{ entry._id }}">Delete</a>
+          <a href="{{ url_for('edit_entry', entry_id=entry._id, next=request.path) }}">Edit</a>
+          <a href="{{ url_for('delete_entry', entry_id=entry._id, next=request.path) }}">Delete</a>
         </td>
       </tr>
     {% endfor %}
