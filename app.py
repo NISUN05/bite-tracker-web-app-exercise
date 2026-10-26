@@ -206,7 +206,13 @@ def weekly_goal():
     if request.method == "POST":
         values = {}
         for field in fields.values():
-            values[field] = float(request.form[field])
+            value = request.form.get(field, "").strip()
+            if value == "":
+                return "All goal fields are required."
+            try:
+                values[field] = float(value)
+            except ValueError:
+                return "Goals must be numbers."
             if values[field] <= 0:
                 return "Goals must be greater than zero."  
                     
@@ -243,7 +249,7 @@ def weekly_goal():
             else:
                 results[nutrient] = actual <= target
 
-    can_view_result = bool(today >= week_end and progress)
+    can_view_result = bool(today >= next_week and progress)
     show_result = can_view_result and request.args.get("result") == "yes"
     all_met = None
 
