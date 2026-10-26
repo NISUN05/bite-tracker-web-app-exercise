@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weekly Summary</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/static/style.css">
@@ -18,7 +19,7 @@
     {{ week_start.strftime("%B %d, %Y") }} -
     {{ week_end.strftime("%B %d, %Y") }}
   </p>
-
+<div style="overflow-x:auto;">
   <table>
     <tr>
       <th>Date</th>
@@ -46,6 +47,7 @@
       <td>{{ weekly_totals.fat }}</td>
     </tr>
   </table>
+  </div>
 
 </body>
 </html>
