@@ -187,6 +187,24 @@ def weekly_summary():
         daily_summary=daily_summary,
         weekly_totals=weekly_totals,
     )
+
+@app.route("/weekly-goal", methods=["GET", "POST"])
+def weekly_goal():
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    date = request.args.get("week", today.strftime("%Y-%m-%d"))
+    date = datetime.strptime(date, "%Y-%m-%d")
+    week_start = date - timedelta(days=date.weekday())
+    next_week = week_start + timedelta(days=7)
+    week_end = next_week - timedelta(days=1)
+    week_key = week_start.strftime("%Y-%m-%d")
+
+    return render_template(
+        "weekly_goal.html",
+        week_start=week_start,
+        week_end=week_end,
+        week_key=week_key,
+        is_future_week=week_start > today
+    )
   
 @app.route("/history")
 def history():
